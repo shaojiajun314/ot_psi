@@ -1,0 +1,69 @@
+cmake_minimum_required (VERSION 3.6)
+
+project(PSI)
+
+
+set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_HOME_DIRECTORY}/bin)
+set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_HOME_DIRECTORY}/lib)
+set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_HOME_DIRECTORY}/lib)
+
+
+#############################################
+#            Flag and #defines              #
+#############################################
+add_definitions(-DSOLUTION_DIR=\"${CMAKE_SOURCE_DIR}\")
+SET(CMAKE_CXX_FLAGS "-fPIC")
+SET(CMAKE_C_FLAGS "-fPIC")
+# Set a default build type for single-configuration
+# CMake generators if no build type is set.
+if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
+   SET(CMAKE_BUILD_TYPE Release)
+endif()
+
+
+if(NOT ${CMAKE_BUILD_TYPE} STREQUAL "Release")
+  message(WARNING "\nConfiguration NOT set to Release. Please call cmake with -DCMAKE_BUILD_TYPE=Release  instead of ${CMAKE_BUILD_TYPE}")
+
+    if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+      message(WARNING "Debug build.")
+    elseif("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+      message(WARNING "Release build.")
+    elseif("${CMAKE_BUILD_TYPE}" STREQUAL  "RELWITHDEBINFO")
+      message(WARNING "RELWITHDEBINFO=Release with debug info build.")
+    else()
+      message(ERROR ": Unknown build type - ${CMAKE_BUILD_TYPE}  Please use one of Debug, Release, or RELWITHDEBINFO\n\n" )
+    endif()
+endif()
+
+
+# Select flags.
+
+#############################################
+#       Library/includes locations          #
+#############################################
+
+include_directories("${CMAKE_SOURCE_DIR}")
+
+# default location for libOTe
+set(libOTe_Dirs "${CMAKE_SOURCE_DIR}/../libOTe/")
+include_directories("${libOTe_Dirs}/")
+include_directories("${libOTe_Dirs}/libOTe")
+include_directories("${libOTe_Dirs}/cryptoTools")
+
+# default location for miracl
+set(Miracl_Dirs "${libOTe_Dirs}/cryptoTools/thirdparty/linux/miracl/")
+include_directories("${Miracl_Dirs}")
+
+# default location for Boost
+set(BOOST_ROOT "${libOTe_Dirs}/cryptoTools/thirdparty/linux/boost/")
+
+
+#############################################
+#               Build PSI                   #
+#############################################
+add_subdirectory(PSI)
+
+#############################################
+#           Build PSI PSISO                 #
+#############################################
+add_subdirectory(PSISO)
